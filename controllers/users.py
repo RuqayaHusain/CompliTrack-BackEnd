@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from models.user import UserModel
 from serializers.user import UserSchema, UserLogin, UserToken, UserResponseSchema
 from database import get_db
+from typing import List
 
 router = APIRouter()
 
@@ -41,3 +42,8 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
 
     # Return token and a success message
     return {"token": token, "message": "Login successful"}
+
+@router.get("/users", response_model=List[UserResponseSchema])
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(UserModel).all()
+    return users
