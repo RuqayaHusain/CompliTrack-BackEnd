@@ -1,131 +1,66 @@
-# Python FastAPI Serializers and Controllers Lab Solution
+# CompliTrack – Backend
 
-## About
+## 📝 Overview
 
-This repo contains the solution code for the [Python FastAPI Serializers and Controllers Lab](https://pages.git.generalassemb.ly/modular-curriculum-all-courses/python-fastapi-serializers-and-controllers-lab/canvas-landing-pages/fallback.html)
+This repository contains the **FastAPI backend** for **CompliTrack**, a compliance and license tracking system designed for SMEs in Bahrain.  
+The backend provides secure authentication, RESTful APIs, and database management for users, businesses, licenses, and compliance tasks.
 
-## Getting Started
+---
 
-1. Fork and clone this repo.
+## 🚀 Getting Started
 
-2. Navigate into the project directory:
+### 🔗 Links
+- **Frontend Repository:** [Frontend Repo](https://github.com/RuqayaHusain/CompliTrack-FrontEnd)
 
-```sh
- cd python-fastapi-serializers-and-controllers-lab-solution
-```
+---
 
-3. Install dependencies (this also creates the virtual environment if it doesn’t exist):
+## 🛠️ Technologies Used
 
-```sh
- pipenv install
-```
+- FastAPI
+- Python 3.9+
+- PostgreSQL
+- SQLAlchemy ORM
+- Pydantic (v2)
+- JWT Authentication
+- Uvicorn
 
-4. Activate the virtual environment:
+---
 
-```sh
- pipenv shell
-```
+## 🧱 Core Entities
 
-5. Set up your PostgreSQL database:
+- **User** – Authenticated system users
+- **Business** – SME businesses owned by users
+- **License** – Business licenses with expiry dates
+- **Compliance Task** – Compliance obligations and deadlines
 
-   - Ensure PostgreSQL is installed and running on your machine.
-   - Create a database named `teas_db` if it does not already exist:
+---
 
-```bash
-createdb teas_db
-```
+## 🔐 Authentication & Authorization
 
-6. Open the application in Visual Studio Code:
+- JWT-based authentication
+- Secure login and registration
+- Protected routes
+- Only authenticated users can create, update, or delete data
 
-```bash
-code .
-```
+---
 
-7. The database connection string is defined in the `config/environment.py` file:
+## 🔁 API Routes (Sample)
 
-```python
-db_URI = "postgresql://<username>@localhost:5432/teas_db"
-```
+### Authentication
+- `POST /api/auth/register`
+- `POST /api/auth/login`
 
-> _Modify your database connection string to use your username as the `<username>`._
+### Users
+- `GET /api/users`
 
-8. Seed the database with initial data:
+### Businesses
+- `POST /api/businesses`
+- `GET /api/businesses`
 
-   - Run the `seed.py` file to reset the database by dropping existing tables and repopulating it with starter data:
+### Licenses
+- `POST /api/licenses`
+- `GET /api/licenses`
 
-```bash
-pipenv run python seed.py
-```
-
-> You should see output indicating the database was successfully seeded. If there are any errors, check the `db_URI` in the `config/environment.py` file.
-
-9. Start the development server:
-
-```bash
-pipenv run uvicorn main:app --reload
-```
-
-> You should now have the app running. Visit [`http://127.0.0.1:8000`](http://127.0.0.1:8000) in your browser to confirm it’s working.
-
-10. Now you can test each endpoint using FastAPI’s built-in documentation.
-
-> Navigate to FastAPI Documentation: Open [`http://localhost:8000/docs`](http://localhost:8000/docs) in your browser.
-
-<br>
-
-### Troubleshooting PostgreSQL
-
-- The database connection string is defined in the `config/environment.py` file:
-
-  ```python
-  db_URI = "postgresql://<username>@localhost:5432/teas_db"
-  ```
-
-- Ensure your PostgreSQL instance is configured to allow connections with the provided credentials.
-- **_Modify your database connection string to use your username as the `<username>`._**
-
-#### Setting Up a User in PostgreSQL
-
-To connect to a specific PostgreSQL user, use the following command:
-
-```sh
-psql -U <username>
-```
-
-#### Handling "Role Does Not Exist" Error
-
-If you see this error:
-
-```sh
-Error: FATAL: role "<username>" does not exist
-```
-
-it means that the specified user does not exist in PostgreSQL.
-
-#### Creating a New PostgreSQL User
-
-To create the user, run the following command inside `psql`:
-
-```sql
-CREATE ROLE "<username>" WITH LOGIN PASSWORD 'your_secure_password';
-```
-
-> 🔹 **Replace** `<username>` with your desired username and **choose a secure password**.
-
-This will allow you to connect using one of the following database connection strings:
-
-#### Connection Strings:
-
-If **no password is required**:
-
-```python
-db_URI = "postgresql://<username>@localhost:5432/teas_db"
-```
-
-If **a password is required**:
-
-```python
-db_URI = "postgresql://<username>:<your_secure_password>@localhost:5432/teas_db"
-```
-
-This ensures that PostgreSQL correctly authenticates and allows access to the `teas_db` database.
+### Compliance Tasks
+- `POST /api/tasks`
+- `GET /api/tasks`
