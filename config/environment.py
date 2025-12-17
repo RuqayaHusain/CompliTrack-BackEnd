@@ -1,2 +1,7 @@
-db_URI = "postgresql://ruqayahussain@localhost:5432/teas_db"
-secret = 'dasdsadadas'
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+db_URI = os.getenv('DATABASE_URL')
+secret = os.getenv('JWT_SECRET')

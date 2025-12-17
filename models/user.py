@@ -31,7 +31,8 @@ class UserModel(Base):
         payload = {
             "exp": datetime.now(timezone.utc) + timedelta(days=1),
             "iat": datetime.now(timezone.utc),
-            "sub": self.id
+            "sub": self.id,
+            "username": self.username
         }
 
         token = jwt.encode(payload, secret, algorithm="HS256")
