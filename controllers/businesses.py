@@ -66,6 +66,25 @@ def get_businesses(
 
     return all_businesses
 
+@router.get('/businesses/{business_id}', response_model=BusinessSchema)
+def get_single_business(
+    business_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    business = db.query(BusinessModel).filter(
+        BusinessModel.id == business_id,
+        BusinessModel.user_id == current_user.id
+        ).first()
+
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    
+    return business
+
 # Placeholder route to test the router
 @router.get('/businesses/test')
 def test_businesses_router():
