@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from .base import BaseModel
 from enum import Enum
 
-class StatusEnum(str, Enum):
+class LicenseStatusEnum(str, Enum):
     VALID = "Valid"
     EXPIRED = "Expired"
     PENDING_RENEWAL = "Pending Renewal"
@@ -17,7 +17,7 @@ class LicenseModel(BaseModel):
     description = Column(Text, nullable=True)  # Text allows longer content than String
     issue_date = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     expiry_date = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
-    status = Column(SQLEnum(StatusEnum, name='status_enum'), nullable=False)
+    status = Column(SQLEnum(LicenseStatusEnum, name='license_status_enum'), nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Foreign key linking to businesses table

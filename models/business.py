@@ -32,4 +32,5 @@ class BusinessModel(BaseModel):
     # Relationships - these let us access related data easily!
     user = relationship('UserModel', back_populates='businesses')
     licenses = relationship('LicenseModel', back_populates='business', cascade='all, delete-orphan')
+    compliance_tasks = relationship('ComplianceTaskModel', back_populates='business', cascade='all, delete-orphan')
 
