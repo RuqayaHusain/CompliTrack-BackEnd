@@ -103,7 +103,7 @@ def update_business(
     if business.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to update this business"
+            detail='Not authorized to update this business'
         )
     
     update_data = business_update.dict(exclude_unset=True)
@@ -112,11 +112,30 @@ def update_business(
     
     db.commit()
     db.refresh(business)
-    
+
     return business
 
-# Placeholder route to test the router
-@router.get('/businesses/test')
-def test_businesses_router():
-    """Test endpoint to verify the businesses router is working"""
-    return {"message": "Businesses router is working! Ready for CRUD operations."}
+@router.delete('/businesses/{business_id}')
+def delete_business(
+    business_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    business = db.query(BusinessModel).filter(BusinessModel.id == business_id).first()
+
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    
+    if business.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Not authorized to delete this business'
+        )
+    
+    db.delete(business)
+    db.commit()
+
+    return {"message": f"Business with id {business_id} has been deleted successfully"}
