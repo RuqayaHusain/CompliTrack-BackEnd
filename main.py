@@ -1,8 +1,7 @@
 from fastapi import FastAPI
-from controllers.teas import router as TeasRouter
-from controllers.comments import router as CommentsRouter
-from controllers.users import router as UserRouter
 from fastapi.middleware.cors import CORSMiddleware
+from controllers.users import router as UserRouter
+from controllers.businesses import router as BusinessesRouter
 
 app = FastAPI()
 
@@ -19,11 +18,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-app.include_router(TeasRouter, prefix="/api")
-app.include_router(CommentsRouter, prefix="/api")
 app.include_router(UserRouter, prefix="/api/auth")
+app.include_router(BusinessesRouter, prefix="/api", tags=["Businesses"])
+
 
 @app.get('/')
 def home():
-    return 'Hello World!'
+    return {'message': 'Welcome to CompliTrack API! Visit /docs for API documentation.'}
 

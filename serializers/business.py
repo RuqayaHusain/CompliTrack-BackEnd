@@ -11,7 +11,7 @@ class BusinessCreate(BaseModel):
     description: Optional[str] = Field(None, description="Description of the Business")
     cr_number: str = Field(..., min_length=1, max_length=50, description="CR Number of the Business")
     industry: IndustryEnum
-    image_url = Optional[str] = Field(None, description="Business Logo")
+    image_url: Optional[str] = Field(None, description="Business Logo")
 
     class Config:
         schema_extra = {
@@ -27,36 +27,39 @@ class BusinessCreate(BaseModel):
 class BusinessUpdate(BaseModel):
     """Schema for updating a business (all fields optional)"""
     name: Optional[str] = Field(None, min_length=1, max_length=255)
-    description: Optional[str] = Field(None)
+    description: Optional[str] = None
     cr_number: Optional[str] = Field(None, min_length=1, max_length=50)
     industry: Optional[IndustryEnum] = None
-    image_url = Optional[str] = Field(None)
+    image_url: Optional[str] = None
+
+    class Config:
+        from_attributes = True
     
 
 class LicenseSchema(BaseModel):
     """Basic License schema for nested display"""
     id: int
     name: str
-    description: str
+    description: Optional[str] = None
     issue_date: datetime
     expiry_date: datetime
     status: LicenseStatusEnum
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class BusinessSchema(BaseModel):
     """Schema for returning business data"""
     id: int
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
     cr_number: str
     industry: IndustryEnum
-    image_url: Optional[str]
+    image_url: Optional[str] = None
     created_at: datetime
     user: UserSchema
     licenses: List[LicenseSchema] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
