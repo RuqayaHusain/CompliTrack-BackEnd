@@ -1,7 +1,7 @@
 # models/user.py
 
 from sqlalchemy import Column, Integer, String
-from .base import Base
+from .base import BaseModel
 from passlib.context import CryptContext
 from datetime import datetime, timezone, timedelta  # New import for timestamps
 import jwt
@@ -11,7 +11,7 @@ from sqlalchemy.orm import relationship
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 from config.environment import secret
 
-class UserModel(Base):
+class UserModel(BaseModel):
 
     __tablename__ = "users"
 
@@ -21,21 +21,20 @@ class UserModel(Base):
     password_hash = Column(String, nullable=True)  # Add new field for storing the hashed password
 
     # Add relationship with business
-    business = relationship('BusinessModel', back_populates='user', cascade='all, delete-orphan')
+    businesses = relationship('BusinessModel', back_populates='user', cascade='all, delete-orphan')
 
     # Method to hash and store the password
     def set_password(self, password: str):
         self.password_hash = pwd_context.hash(password)
 
     def verify_password(self, password: str) -> bool:
-        return pwd_context.verify(password, self.
-        password_hash)
+        return pwd_context.verify(password, self.password_hash)
 
     def generate_token(self):
         payload = {
             "exp": datetime.now(timezone.utc) + timedelta(days=1),
             "iat": datetime.now(timezone.utc),
-            "sub": self.id,
+            "sub": str(self.id),
             "username": self.username
         }
 
