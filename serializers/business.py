@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
-from .user import UserSchema
+from .user import UserResponseSchema
 from models.business import IndustryEnum
 from models.license import LicenseStatusEnum
 
@@ -58,7 +58,7 @@ class BusinessSchema(BaseModel):
     industry: IndustryEnum
     image_url: Optional[str] = None
     created_at: datetime
-    user: UserSchema
+    user: UserResponseSchema
     licenses: List[LicenseSchema] = []
 
     class Config:
