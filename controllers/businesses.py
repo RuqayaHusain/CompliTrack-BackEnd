@@ -85,6 +85,36 @@ def get_single_business(
     
     return business
 
+@router.put('/businesses/{business_id}', response_model=BusinessSchema)
+def update_business(
+    business_id: int,
+    business_update: BusinessUpdate,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    business = db.query(BusinessModel).filter(BusinessModel.id == business_id).first()
+
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    
+    if business.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this business"
+        )
+    
+    update_data = business_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(business, key, value)
+    
+    db.commit()
+    db.refresh(business)
+    
+    return business
+
 # Placeholder route to test the router
 @router.get('/businesses/test')
 def test_businesses_router():

@@ -28,7 +28,6 @@ class BusinessUpdate(BaseModel):
     """Schema for updating a business (all fields optional)"""
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     description: Optional[str] = None
-    cr_number: Optional[str] = Field(None, min_length=1, max_length=50)
     industry: Optional[IndustryEnum] = None
     image_url: Optional[str] = None
 
