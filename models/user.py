@@ -5,6 +5,7 @@ from .base import Base
 from passlib.context import CryptContext
 from datetime import datetime, timezone, timedelta  # New import for timestamps
 import jwt
+from sqlalchemy.orm import relationship
 
 # Creating a password hashing context using bcrypt
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -18,6 +19,9 @@ class UserModel(Base):
     username = Column(String, nullable=False, unique=True)
     email = Column(String, nullable=False, unique=True)
     password_hash = Column(String, nullable=True)  # Add new field for storing the hashed password
+
+    # Add relationship with business
+    business = relationship('BusinessModel', back_populates='user', cascade='all, delete-orphan')
 
     # Method to hash and store the password
     def set_password(self, password: str):
