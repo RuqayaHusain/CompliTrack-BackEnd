@@ -9,12 +9,12 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from config.environment import db_URI
-from models.base import BaseModel
+from models.base import Base
 # Import ALL models so Alembic can detect them
 from models.user import UserModel
+from models.compliance_task import ComplianceTaskModel
 from models.business import BusinessModel
 from models.license import LicenseModel
-from models.compliance_task import ComplianceTaskModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -29,7 +29,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = BaseModel.metadata
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

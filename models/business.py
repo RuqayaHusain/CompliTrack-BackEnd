@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from .base import BaseModel
 from enum import Enum
+from .compliance_task import ComplianceTaskModel
 
 class IndustryEnum(str, Enum):
     RETAIL = "Retail"
@@ -32,4 +33,4 @@ class BusinessModel(BaseModel):
     # Relationships - these let us access related data easily!
     user = relationship('UserModel', back_populates='businesses')
     licenses = relationship('LicenseModel', back_populates='business', cascade='all, delete-orphan')
-    # compliance_tasks = relationship('ComplianceTaskModel', back_populates='business', cascade='all, delete-orphan')
+    compliance_tasks = relationship('ComplianceTaskModel', back_populates='business', cascade='all, delete-orphan')
