@@ -13,6 +13,8 @@ psycopg2 = "*"
 passlib = "*"
 bcrypt = "4.0.1"
 pyjwt = "*"
+alembic = "*"
+dotenv = "*"
 
 [dev-packages]
 
