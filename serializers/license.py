@@ -10,7 +10,6 @@ class LicenseCreate(BaseModel):
     issue_date: datetime = Field(..., description="Issue date of the license")
     expiry_date: datetime = Field(..., description="Expiry date of the license")
     status: LicenseStatusEnum = Field(..., description="Current status of the license")
-    business_id: int = Field(..., description="ID of the business this license belongs to")
 
     class Config:
         schema_extra = {
@@ -20,7 +19,6 @@ class LicenseCreate(BaseModel):
                 "issue_date": "2025-01-01T00:00:00Z",
                 "expiry_date": "2026-01-01T00:00:00Z",
                 "status": "VALID",
-                "business_id": 1
             }
         }
 

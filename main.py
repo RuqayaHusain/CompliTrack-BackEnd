@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.users import router as UserRouter
 from controllers.businesses import router as BusinessesRouter
+from controllers.licenses import router as LicensesRouter
 
 app = FastAPI()
 
@@ -20,6 +21,7 @@ app.add_middleware(
 
 app.include_router(UserRouter, prefix="/api/auth")
 app.include_router(BusinessesRouter, prefix="/api", tags=["Businesses"])
+app.include_router(LicensesRouter, prefix="/api", tags=["Licenses"])
 
 
 @app.get('/')
