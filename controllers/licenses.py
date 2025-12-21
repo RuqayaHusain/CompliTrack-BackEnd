@@ -96,3 +96,36 @@ def get_licenses(
     all_licenses = filtered_licenses.all()
 
     return all_licenses
+
+@router.get('/businesses/{business_id}/licenses/{lincense_id}', response_model=LicenseSchema)
+def get_single_license(
+    business_id: int,
+    license_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    # Check if business exists
+    business = db.query(BusinessModel).filter(
+        BusinessModel.id == business_id,
+        BusinessModel.user_id == current_user.id,
+    ).first()
+
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found',
+        )
+    
+    # Check if license exists
+    license = db.query(LicenseModel).filter(
+        LicenseModel.id == license_id,
+        LicenseModel.business_id == business_id,
+        ).first()
+    
+    if not license:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='License not found',
+        )
+    
+    return license
