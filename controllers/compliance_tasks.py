@@ -107,3 +107,46 @@ def get_single_compliance_task(
         )
     
     return task
+
+
+@router.put('/businesses/{business_id}/compliance-tasks/{task_id}', response_model=ComplianceTaskSchema)
+def update_compliance_task(
+    business_id: int,
+    task_id: int,
+    task_update: ComplianceTaskUpdate,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    
+    # check if the business exists and belongs to the user
+    business = db.query(BusinessModel).filter(
+        BusinessModel.id == business_id,
+        BusinessModel.user_id == current_user.id
+    ).first()
+    
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    # if exists run the query 
+    task = db.query(ComplianceTaskModel).filter(
+        ComplianceTaskModel.id == task_id,
+        ComplianceTaskModel.business_id == business_id
+    ).first()
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Compliance task not found'
+        )
+    
+    # update only provided fields
+    update_data = task_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(task, key, value)
+    
+    db.commit()
+    db.refresh(task)
+    
+    return task
