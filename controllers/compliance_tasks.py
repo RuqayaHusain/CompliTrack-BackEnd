@@ -48,4 +48,29 @@ def create_compliance_task(
     
     return new_task
     
+
+@router.get('/businesses/{business_id}/compliance-tasks', response_model=List[ComplianceTaskSchema])
+def get_compliance_tasks(
+    business_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
     
+    # Check if the business exists and belongs to the user
+    business = db.query(BusinessModel).filter(
+        BusinessModel.id == business_id,
+        BusinessModel.user_id == current_user.id
+    ).first()
+    
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    # if exists run the query and show 
+    tasks = db.query(ComplianceTaskModel).options(
+        joinedload(ComplianceTaskModel.business)
+    ).filter(ComplianceTaskModel.business_id == business_id).all()
+    
+    return tasks
+
