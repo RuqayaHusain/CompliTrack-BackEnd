@@ -11,3 +11,41 @@ from database import get_db
 from dependencies.get_current_user import get_current_user
 
 router=APIRouter()
+
+@router.post('/businesses/{business_id}/compliance-tasks', response_model=ComplianceTaskSchema, status_code=status.HTTP_201_CREATED)
+def create_compliance_task(
+    business_id: int,
+    task: ComplianceTaskCreate,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    
+    # Check if the business exists and belongs to the user
+    business = db.query(BusinessModel).filter(
+        BusinessModel.id == business_id,
+        BusinessModel.user_id == current_user.id
+    ).first()
+    
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    
+    # Create new task for the business
+    new_task = ComplianceTaskModel(
+        title=task.title,
+        description=task.description,
+        due_date=task.due_date,
+        status=task.status,
+        submission_date=task.submission_date,
+        business_id=business_id
+    )
+    
+    db.add(new_task)
+    db.commit()
+    db.refresh(new_task)
+    
+    return new_task
+    
+    
