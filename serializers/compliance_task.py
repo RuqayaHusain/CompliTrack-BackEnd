@@ -10,3 +10,9 @@ class ComplianceTaskCreate(BaseModel):
     status:TaskStatusEnum=TaskStatusEnum.PENDING
     submission_date:Optional[datetime]=None
 
+class ComplianceTaskUpdate(BaseModel):
+    title: Optional[str]=Field(None,min_length=1,max_length=255)
+    description:Optional[str]=None
+    due_date: Optional[datetime] = None
+    status: Optional[TaskStatusEnum] = None
+    submission_date: Optional[datetime] = None
