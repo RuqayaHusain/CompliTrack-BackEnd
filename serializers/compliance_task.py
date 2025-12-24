@@ -2,3 +2,11 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 from models.compliance_task import TaskStatusEnum
+
+class ComplianceTaskCreate(BaseModel):
+    title: str=Field(...,min_length=1,max_length=255)
+    description:str
+    due_date:datetime
+    status:TaskStatusEnum=TaskStatusEnum.PENDING
+    submission_date:Optional[datetime]=None
+
