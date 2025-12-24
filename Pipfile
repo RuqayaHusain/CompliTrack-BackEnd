@@ -4,8 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "*"
-uvicorn = "*"
 sqlalchemy = "*"
 psycopg2-binary = "*"
 pydantic = "*"
@@ -15,6 +13,8 @@ bcrypt = "4.0.1"
 pyjwt = "*"
 alembic = "*"
 dotenv = "*"
+fastapi = "*"
+uvicorn = "*"
 
 [dev-packages]
 

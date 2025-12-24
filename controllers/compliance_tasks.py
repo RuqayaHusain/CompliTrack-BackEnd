@@ -150,3 +150,40 @@ def update_compliance_task(
     db.refresh(task)
     
     return task
+
+@router.delete('/businesses/{business_id}/compliance-tasks/{task_id}')
+def delete_compliance_task(
+    business_id: int,
+    task_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    
+    # check if the business exists and belongs to the user
+    business = db.query(BusinessModel).filter(
+        BusinessModel.id == business_id,
+        BusinessModel.user_id == current_user.id
+    ).first()
+    
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    
+    # if exists run the query 
+    task = db.query(ComplianceTaskModel).filter(
+        ComplianceTaskModel.id == task_id,
+        ComplianceTaskModel.business_id == business_id
+    ).first()
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Compliance task not found'
+        )
+    
+    db.delete(task)
+    db.commit()
+    
+    return {"message": "Compliance task deleted successfully"}
