@@ -182,3 +182,39 @@ def update_license(
     
     return license
 
+@router.delete('/businesses/{business_id}/licenses/{license_id}')
+def delete_license(
+    business_id: int,
+    license_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    
+    # check if the business exists and belongs to the user
+    business = db.query(BusinessModel).filter(
+        BusinessModel.id == business_id,
+        BusinessModel.user_id == current_user.id
+    ).first()
+    
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    
+    # check if the license exists
+    license = db.query(LicenseModel).filter(
+        LicenseModel.id == license_id,
+        LicenseModel.business_id == business_id
+    ).first()
+    
+    if not license:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='License not found'
+        )
+    
+    db.delete(license)
+    db.commit()
+    
+    return {"message": "License deleted successfully"}
