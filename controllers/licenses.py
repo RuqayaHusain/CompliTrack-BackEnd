@@ -129,3 +129,92 @@ def get_single_license(
         )
     
     return license
+
+@router.put('/businesses/{business_id}/licenses/{license_id}', response_model=LicenseSchema)
+def update_license(
+    business_id: int,
+    license_id: int,
+    license_update: LicenseCreate,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    
+    # check if the business exists and belongs to the user
+    business = db.query(BusinessModel).filter(
+        BusinessModel.id == business_id,
+        BusinessModel.user_id == current_user.id
+    ).first()
+    
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    
+    # check if the license exists
+    license = db.query(LicenseModel).filter(
+        LicenseModel.id == license_id,
+        LicenseModel.business_id == business_id
+    ).first()
+    
+    if not license:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='License not found'
+        )
+    
+    # expiry date validation for the license
+    if license_update.expiry_date <= license_update.issue_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Expiry date must be after issue date'
+        )
+    
+    # update the license fields
+    license.name = license_update.name
+    license.description = license_update.description
+    license.issue_date = license_update.issue_date
+    license.expiry_date = license_update.expiry_date
+    license.status = license_update.status
+    
+    db.commit()
+    db.refresh(license)
+    
+    return license
+
+@router.delete('/businesses/{business_id}/licenses/{license_id}')
+def delete_license(
+    business_id: int,
+    license_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    
+    # check if the business exists and belongs to the user
+    business = db.query(BusinessModel).filter(
+        BusinessModel.id == business_id,
+        BusinessModel.user_id == current_user.id
+    ).first()
+    
+    if not business:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Business not found'
+        )
+    
+    # check if the license exists
+    license = db.query(LicenseModel).filter(
+        LicenseModel.id == license_id,
+        LicenseModel.business_id == business_id
+    ).first()
+    
+    if not license:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='License not found'
+        )
+    
+    db.delete(license)
+    db.commit()
+    
+    return {"message": "License deleted successfully"}
