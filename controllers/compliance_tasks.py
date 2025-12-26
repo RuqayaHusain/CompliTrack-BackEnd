@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session, joinedload
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 
 from models.user import UserModel
@@ -52,6 +52,10 @@ def create_compliance_task(
 @router.get('/businesses/{business_id}/compliance-tasks', response_model=List[ComplianceTaskSchema])
 def get_compliance_tasks(
     business_id: int,
+    title: Optional[str] = Query(None, description='Filter by task title'),
+    task_status: Optional[TaskStatusEnum] = Query(None, description='Filter by task status'),
+    due_before: Optional[datetime] = Query(None, description='Tasks due before this date'),
+    due_after: Optional[datetime] = Query(None, description='Tasks due after this date'),
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user)
 ):
@@ -68,11 +72,25 @@ def get_compliance_tasks(
             detail='Business not found'
         )
     # if exists run the query and show 
-    tasks = db.query(ComplianceTaskModel).options(
+    filtered_tasks = db.query(ComplianceTaskModel).options(
         joinedload(ComplianceTaskModel.business)
-    ).filter(ComplianceTaskModel.business_id == business_id).all()
+    ).filter(ComplianceTaskModel.business_id == business_id)
+
+    if title:
+        filtered_tasks = filtered_tasks.filter(ComplianceTaskModel.title.ilike(f"%{title}%"))
+
+    if task_status:
+        filtered_tasks = filtered_tasks.filter(ComplianceTaskModel.status == task_status)
+
+    if due_before:
+        filtered_tasks = filtered_tasks.filter(ComplianceTaskModel.due_date < due_before)
+
+    if due_after:
+        filtered_tasks = filtered_tasks.filter(ComplianceTaskModel.due_date > due_after)
+
+    all_tasks = filtered_tasks.all()
     
-    return tasks
+    return all_tasks
 
 @router.get('/businesses/{business_id}/compliance-tasks/{task_id}', response_model=ComplianceTaskSchema)
 def get_single_compliance_task(
