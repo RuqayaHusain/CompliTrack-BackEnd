@@ -97,7 +97,7 @@ def get_licenses(
 
     return all_licenses
 
-@router.get('/businesses/{business_id}/licenses/{lincense_id}', response_model=LicenseSchema)
+@router.get('/businesses/{business_id}/licenses/{license_id}', response_model=LicenseSchema)
 def get_single_license(
     business_id: int,
     license_id: int,
