@@ -8,7 +8,7 @@ class UserSchema(BaseModel):
     password: str  # Plain text password for user registration (will be hashed before saving)
 
     class Config:
-        orm_mode = True  # Enables compatibility with ORM models
+        from_attributes = True  # Enables compatibility with ORM models
 
 # Schema for returning user data (without exposing the password)
 class UserResponseSchema(BaseModel):
@@ -16,7 +16,7 @@ class UserResponseSchema(BaseModel):
     email: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserLogin(BaseModel):
     username: str  # Username provided by the user during login
@@ -28,4 +28,4 @@ class UserToken(BaseModel):
     message: str  # Success message
 
     class Config:
-        orm_mode = True
+        from_attributes = True
